@@ -15,5 +15,6 @@ namespace BadgerRank.Heart.Test
 
             Assert.True(games.Count > 0);
         }
+
     }
 }

@@ -13,8 +13,6 @@ namespace BadgerRank
 
             var games = gameResolver.GetGamesForWeek(2019, 1);
 
-            //var teams = 
-
             Console.WriteLine("Hello World!");
             Console.Read();
         }
