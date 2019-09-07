@@ -6,12 +6,10 @@ namespace BadgerRank
 {
     class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var gameResolver = new GameResolver();
-            var outputBuilder = new StringBuilder();
+            var ranker = new Ranker();
 
-            var games = gameResolver.GetGamesForWeek(2019, 1);
 
             Console.WriteLine("Hello World!");
             Console.Read();

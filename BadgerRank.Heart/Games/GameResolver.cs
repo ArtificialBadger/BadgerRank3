@@ -8,22 +8,22 @@ using System.Threading.Tasks;
 
 namespace BadgerRank.Heart
 {
-    public class GameResolver
+    public class GameResolver : IGameResolver
     {
-        public async Task<List<Game>> GetGamesForWeek(int year, int week)
+        public async Task<IEnumerable<Game>> GetGamesForWeek(int year, int week)
         {
-            var a = new List<Game>();
+            var games = new List<Game>();
 
             using (var client = CreateCFBApiClient())
             {
                 var response = await client.GetAsync(new Uri($"games?year={year}&week={week}", UriKind.Relative));
                 if (response.IsSuccessStatusCode)
                 {
-                    a = JsonConvert.DeserializeObject<List<Game>>(await response.Content.ReadAsStringAsync());
+                    games = JsonConvert.DeserializeObject<List<Game>>(await response.Content.ReadAsStringAsync());
                 }
             }
 
-            return a;
+            return games;
         }
 
         private HttpClient CreateCFBApiClient()
