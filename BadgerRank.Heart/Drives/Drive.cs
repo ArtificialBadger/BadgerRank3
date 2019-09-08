@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 
-using System.Globalization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
-namespace BadgerRank.Core.Models
+namespace BadgerRank.Heart.Drives
 {
     public sealed class Drive
     {

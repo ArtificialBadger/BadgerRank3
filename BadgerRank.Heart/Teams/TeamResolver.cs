@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
-using BadgerRank.Core.Models;
-using Newtonsoft.Json;
 
 namespace BadgerRank.Heart.Teams
 {
@@ -29,7 +28,23 @@ namespace BadgerRank.Heart.Teams
                 }
             }
 
-            return teams;
+            return teams.ToList();
+        }
+
+        public async Task<IEnumerable<Team>> GetFbsTeams()
+        {
+            var teams = new List<Team>();
+
+            using (var client = this.clientFactory.CreateCFBApiClient())
+            {
+                var response = await client.GetAsync(new Uri($"teams/fbs", UriKind.Relative));
+                if (response.IsSuccessStatusCode)
+                {
+                    teams = JsonConvert.DeserializeObject<List<Team>>(await response.Content.ReadAsStringAsync());
+                }
+            }
+
+            return teams.ToList();
         }
     }
 }

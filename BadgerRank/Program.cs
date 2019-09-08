@@ -21,7 +21,10 @@ namespace BadgerRank
         {
             var ranker = Program.container.GetInstance<Ranker>();
 
-            await ranker.Rank();
+            var output = await ranker.Rank();
+
+            Console.WriteLine(output);
+            Console.ReadLine();
         }
     }
 }

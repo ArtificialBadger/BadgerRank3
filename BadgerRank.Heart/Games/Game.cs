@@ -5,7 +5,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BadgerRank.Core.Games
+namespace BadgerRank.Heart.Games
 {
     public class Game
     {

@@ -1,4 +1,6 @@
 ﻿using BadgerRank.Heart;
+using BadgerRank.Heart.Drives;
+using BadgerRank.Heart.Games;
 using BadgerRank.Heart.Teams;
 using SimpleInjector;
 using System;
@@ -15,6 +17,7 @@ namespace BadgerRank
 
             container.Register<IGameResolver, GameResolver>();
             container.Register<ITeamResolver, TeamResolver>();
+            container.Register<IDriveResolver, DriveResolver>();
             container.Register<ICfbApiClientFactory, CfbApiClientFactory>();
 
             container.Verify();

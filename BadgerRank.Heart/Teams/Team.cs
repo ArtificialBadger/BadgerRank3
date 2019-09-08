@@ -5,7 +5,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BadgerRank.Core.Teams
+namespace BadgerRank.Heart.Teams
 {
     public sealed class Team
     {
@@ -44,5 +44,8 @@ namespace BadgerRank.Core.Teams
 
         [JsonProperty("logos")]
         public string[] Logos { get; set; }
+
+        public bool IsP5 => Constants.P5Conferences.Contains(this.Conference);
+
     }
 }

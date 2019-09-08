@@ -1,12 +1,10 @@
-﻿using BadgerRank.Core.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace BadgerRank.Heart
+namespace BadgerRank.Heart.Games
 {
     public class GameResolver : IGameResolver
     {
@@ -30,7 +28,7 @@ namespace BadgerRank.Heart
                 }
             }
 
-            return games;
+            return games.ToList();
         }
     }
 }
