@@ -10,11 +10,18 @@ namespace BadgerRank.Heart
 {
     public class GameResolver : IGameResolver
     {
+        private ICfbApiClientFactory clientFactory;
+
+        public GameResolver(ICfbApiClientFactory clientFactory)
+        {
+            this.clientFactory = clientFactory;
+        }
+
         public async Task<IEnumerable<Game>> GetGamesForWeek(int year, int week)
         {
             var games = new List<Game>();
 
-            using (var client = CreateCFBApiClient())
+            using (var client = this.clientFactory.CreateCFBApiClient())
             {
                 var response = await client.GetAsync(new Uri($"games?year={year}&week={week}", UriKind.Relative));
                 if (response.IsSuccessStatusCode)
@@ -24,13 +31,6 @@ namespace BadgerRank.Heart
             }
 
             return games;
-        }
-
-        private HttpClient CreateCFBApiClient()
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://api.collegefootballdata.com/");
-            return client;
         }
     }
 }
