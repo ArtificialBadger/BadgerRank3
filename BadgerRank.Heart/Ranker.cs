@@ -102,7 +102,7 @@ namespace BadgerRank.Heart
 
             for (int i = 0; i < rankList.Count; i++)
             {
-                builder.AppendLine($"{i+1, 2}. {rankList[i].Team.School.PadRight(longestTeamName + 1, ' ')} {rankList[i].DominancePerGame.ToString("F2")}");
+                builder.AppendLine($"{i+1, 2}. {rankList[i].Team.School.PadRight(longestTeamName + 1, ' ')} {rankList[i].DominancePerGame.ToString("F6")}");
             }
 
             return builder.ToString();
@@ -113,8 +113,9 @@ namespace BadgerRank.Heart
             var max = marginOfVictory > 0 ? 1.0m : 0.5m;
             var min = marginOfVictory > 0 ? 0.5m : 0.0m;
 
-            var dominanceConstant = marginOfVictory > 0 ? CalculateDominanceConstant(opponent.Team, marginOfVictory) : -1 * CalculateDominanceConstant(opponent.Team, marginOfVictory);
-            var gameDominance = Math.Min(max, Math.Max(min, .5m + (.25m * opponent.DominancePerGame) + dominanceConstant));
+            var dc = marginOfVictory > 0 ? CalculateWinnerDominanceConstant(teamDominance.Team, opponent.Team, marginOfVictory) : CalculateLoserDominanceConstant(opponent.Team, teamDominance.Team, -1 * marginOfVictory);
+            var dominanceConstant = dc;
+            var gameDominance = Math.Min(max, Math.Max(min ,(.15m * opponent.DominancePerGame) + dominanceConstant));
 
             return new TeamDominance()
             {
@@ -124,38 +125,75 @@ namespace BadgerRank.Heart
             };
         }
 
-        private decimal CalculateDominanceConstant(Team team, int marginOfVictory)
+        private decimal CalculateWinnerDominanceConstant(Team winner, Team loser, int marginOfVictory)
         {
             decimal marginBonus;
 
             if (marginOfVictory < 8)
             {
-                marginBonus = 0.2m;
+                marginBonus = 0.65m;
             }
             else if (marginOfVictory < 14)
             {
-                marginBonus = 0.3m;
+                marginBonus = 0.7m;
             }
             else if (marginOfVictory < 21)
             {
-                marginBonus = 0.4m;
+                marginBonus = 0.75m;
             }
             else
             {
-                marginBonus = 0.5m;
+                marginBonus = 0.8m;
             }
 
-            if (team.IsP5)
+            if (loser.IsP5)
             {
-                marginBonus *= 1.0m;
+                marginBonus *= 1.1m;
             }
-            else if (team.IsFbs)
+            else if (loser.IsFbs)
             {
-                marginBonus *= 0.8m;
+                marginBonus *= .9m;
             }
             else
             {
-                marginBonus *= 0.5m;
+                marginBonus *= .75m;
+            }
+            
+            return marginBonus;
+        }
+
+        private decimal CalculateLoserDominanceConstant(Team winner, Team loser, int marginOfLoss)
+        {
+            decimal marginBonus;
+
+            if (marginOfLoss < 8)
+            {
+                marginBonus = 0.3m;
+            }
+            else if (marginOfLoss < 14)
+            {
+                marginBonus = 0.2m;
+            }
+            else if (marginOfLoss < 21)
+            {
+                marginBonus = 0.1m;
+            }
+            else
+            {
+                marginBonus = 0.0m;
+            }
+
+            if (winner.IsP5)
+            {
+                marginBonus *= 1m;
+            }
+            else if (winner.IsFbs)
+            {
+                marginBonus *= .75m;
+            }
+            else
+            {
+                marginBonus *= 0m;
             }
 
             return marginBonus;
