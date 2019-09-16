@@ -115,7 +115,7 @@ namespace BadgerRank.Heart
 
             var dc = marginOfVictory > 0 ? CalculateWinnerDominanceConstant(teamDominance.Team, opponent.Team, marginOfVictory) : CalculateLoserDominanceConstant(opponent.Team, teamDominance.Team, -1 * marginOfVictory);
             var dominanceConstant = dc;
-            var gameDominance = Math.Min(max, Math.Max(min ,(.15m * opponent.DominancePerGame) + dominanceConstant));
+            var gameDominance = Math.Min(max, Math.Max(min ,(.25m * opponent.DominancePerGame) + dominanceConstant));
 
             return new TeamDominance()
             {
@@ -139,16 +139,16 @@ namespace BadgerRank.Heart
             }
             else if (marginOfVictory < 21)
             {
-                marginBonus = 0.75m;
+                marginBonus = 0.725m;
             }
             else
             {
-                marginBonus = 0.8m;
+                marginBonus = 0.76m;
             }
 
             if (loser.IsP5)
             {
-                marginBonus *= 1.1m;
+                marginBonus *= 1.0m;
             }
             else if (loser.IsFbs)
             {
@@ -156,7 +156,7 @@ namespace BadgerRank.Heart
             }
             else
             {
-                marginBonus *= .75m;
+                marginBonus *= .8m;
             }
             
             return marginBonus;
@@ -265,8 +265,26 @@ namespace BadgerRank.Heart
 
             public int GamesPlayed { get; set; }
 
-            public decimal DominancePerGame => GamesPlayed == 0 ? .5m : TotalDominance / GamesPlayed;
+            public decimal DominancePerGame => GamesPlayed == 0 ? this.Team.BaseDominance() : TotalDominance / GamesPlayed;
+        }
+    }
 
+    public static class TeamExtentions
+    {
+        public static decimal BaseDominance(this Team team)
+        {
+            if (team.IsP5)
+            {
+                return .6m;
+            }
+            else if (team.IsFbs)
+            {
+                return .4m;
+            }
+            else
+            {
+                return .2m;
+            }
         }
     }
 }
