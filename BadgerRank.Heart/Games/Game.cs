@@ -46,7 +46,7 @@ namespace BadgerRank.Heart.Games
         public string HomeConference { get; set; }
 
         [JsonProperty("home_points")]
-        public long HomePoints { get; set; }
+        public int? HomePoints { get; set; }
 
         [JsonProperty("home_line_scores")]
         public long[] HomeLineScores { get; set; }
@@ -58,7 +58,7 @@ namespace BadgerRank.Heart.Games
         public string AwayConference { get; set; }
 
         [JsonProperty("away_points")]
-        public long AwayPoints { get; set; }
+        public int? AwayPoints { get; set; }
 
         [JsonProperty("away_line_scores")]
         public long[] AwayLineScores { get; set; }

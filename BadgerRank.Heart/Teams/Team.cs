@@ -47,7 +47,7 @@ namespace BadgerRank.Heart.Teams
 
         public bool IsP5 => Constants.P5Conferences.Contains(this.Conference);
 
-        public bool IsFcs => Constants.FbsConferences.Contains(this.Conference);
+        public bool IsFbs => Constants.FbsConferences.Contains(this.Conference);
 
     }
 }
