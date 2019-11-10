@@ -1,4 +1,6 @@
 ﻿using BadgerRank.Heart;
+using BadgerRank.Heart.Games;
+using BadgerRank.Heart.Test;
 using SimpleInjector;
 using System;
 using System.Text;
@@ -20,6 +22,14 @@ namespace BadgerRank
         public static async Task Main(string[] args)
         {
             var ranker = Program.container.GetInstance<Ranker>();
+
+            //var abstractionFactory = Program.container.GetInstance<IAbstraction>();
+            //Console.WriteLine(abstractionFactory.Gib().ToString());
+            //Console.WriteLine(abstractionFactory.Gib().ToString());
+
+            //var abstractionFactory2 = Program.container.GetInstance<IAbstraction>();
+            //Console.WriteLine(abstractionFactory2.Gib().ToString());
+            //Console.WriteLine(abstractionFactory2.Gib().ToString());
 
             var output = await ranker.Rank();
 

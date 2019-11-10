@@ -73,6 +73,7 @@ namespace BadgerRank.Heart
                     else
                     {
                         winner = teamDictionary[game.AwayTeam];
+
                         loser = teamDictionary[game.HomeTeam];
 
                         var newWinnerDominance = CalculateDominance(winner, loser, game.AwayPoints.Value - game.HomePoints.Value);
@@ -115,7 +116,7 @@ namespace BadgerRank.Heart
 
             var dc = marginOfVictory > 0 ? CalculateWinnerDominanceConstant(teamDominance.Team, opponent.Team, marginOfVictory) : CalculateLoserDominanceConstant(opponent.Team, teamDominance.Team, -1 * marginOfVictory);
             var dominanceConstant = dc;
-            var gameDominance = Math.Min(max, Math.Max(min ,(.25m * opponent.DominancePerGame) + dominanceConstant));
+            var gameDominance = Math.Min(max, Math.Max(min ,(.35m * opponent.DominancePerGame) + dominanceConstant));
 
             return new TeamDominance()
             {
@@ -139,24 +140,24 @@ namespace BadgerRank.Heart
             }
             else if (marginOfVictory < 21)
             {
-                marginBonus = 0.725m;
+                marginBonus = 0.75m;
             }
             else
             {
-                marginBonus = 0.76m;
+                marginBonus = 0.85m;
             }
 
             if (loser.IsP5)
             {
-                marginBonus *= 1.0m;
+                marginBonus *= .9m;
             }
             else if (loser.IsFbs)
             {
-                marginBonus *= .9m;
+                marginBonus *= .8m;
             }
             else
             {
-                marginBonus *= .8m;
+                marginBonus *= .7m;
             }
             
             return marginBonus;

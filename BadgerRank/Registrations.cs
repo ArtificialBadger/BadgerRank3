@@ -2,9 +2,11 @@
 using BadgerRank.Heart.Drives;
 using BadgerRank.Heart.Games;
 using BadgerRank.Heart.Teams;
+using BadgerRank.Heart.Test;
 using SimpleInjector;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BadgerRank
@@ -19,8 +21,9 @@ namespace BadgerRank
             container.Register<ITeamResolver, TeamResolver>();
             container.Register<IDriveResolver, DriveResolver>();
             container.Register<ICfbApiClientFactory, CfbApiClientFactory>();
+            container.Register<IAbstraction, Implementation>();
 
-            container.Verify();
+            container.RegisterInstance<Func<IAbstraction>>(() => container.GetInstance<IAbstraction>());
         }
     }
 }
