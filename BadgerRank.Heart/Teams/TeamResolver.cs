@@ -19,13 +19,11 @@ namespace BadgerRank.Heart.Teams
         {
             var teams = new List<Team>();
 
-            using (var client = this.clientFactory.CreateCFBApiClient())
+            var client = this.clientFactory.CreateCFBApiClient();
+            var response = await client.GetAsync(new Uri($"teams", UriKind.Relative));
+            if (response.IsSuccessStatusCode)
             {
-                var response = await client.GetAsync(new Uri($"teams", UriKind.Relative));
-                if (response.IsSuccessStatusCode)
-                {
-                    teams = JsonConvert.DeserializeObject<List<Team>>(await response.Content.ReadAsStringAsync());
-                }
+                teams = JsonConvert.DeserializeObject<List<Team>>(await response.Content.ReadAsStringAsync());
             }
 
             return teams.ToList();
@@ -35,13 +33,12 @@ namespace BadgerRank.Heart.Teams
         {
             var teams = new List<Team>();
 
-            using (var client = this.clientFactory.CreateCFBApiClient())
+            var client = this.clientFactory.CreateCFBApiClient();
+
+            var response = await client.GetAsync(new Uri($"teams/fbs", UriKind.Relative));
+            if (response.IsSuccessStatusCode)
             {
-                var response = await client.GetAsync(new Uri($"teams/fbs", UriKind.Relative));
-                if (response.IsSuccessStatusCode)
-                {
-                    teams = JsonConvert.DeserializeObject<List<Team>>(await response.Content.ReadAsStringAsync());
-                }
+                teams = JsonConvert.DeserializeObject<List<Team>>(await response.Content.ReadAsStringAsync());
             }
 
             return teams.ToList();

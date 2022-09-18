@@ -25,9 +25,8 @@ namespace BadgerRank.Heart
         public async Task<string> Rank()
         {
             var teamDictionary = new Dictionary<string, TeamDominance>();
-
-            //var week = 1;
-            var year = 2019;
+            
+            var year = 2022;
 
             var resultBuilder = new StringBuilder();
 
@@ -38,58 +37,75 @@ namespace BadgerRank.Heart
                 teamDictionary[team.School] = new TeamDominance() { Team = team, TotalDominance = 0m, GamesPlayed = 0 };
             }
 
-            for (int week = 1; week < 18; week++)
-            {
-                var games = await this.gameResolver.GetGamesForWeek(year, week);
-                "".ToString();
-                foreach (var game in games)
-                {
-                    if (!game.HomePoints.HasValue || !game.AwayPoints.HasValue)
-                    {
-                        //Console.WriteLine($"What happened with {game.HomeTeam} and {game.AwayTeam}");
-                        continue;
-                    }
+            var games = await this.gameResolver.GetGamesForYear(year);
 
-                    if (game.HomePoints.Value == 0 && game.AwayPoints == 0)
-                    {
-                        continue;
-                    }
-
-                    TeamDominance winner, loser;
-
-                    if (game.HomePoints > game.AwayPoints)
-                    {
-                        winner = teamDictionary[game.HomeTeam];
-                        loser = teamDictionary[game.AwayTeam];
-
-                        var newWinnerDominance = CalculateDominance(winner, loser, game.HomePoints.Value - game.AwayPoints.Value);
-                        var newLoserDominance = CalculateDominance(loser, winner, game.AwayPoints.Value - game.HomePoints.Value);
-
-                        Console.WriteLine($"{winner.Team.School} beats {loser.Team.School} {game.HomePoints}-{game.AwayPoints} with dominance {newWinnerDominance.TotalDominance - winner.TotalDominance} | {newLoserDominance.TotalDominance - loser.TotalDominance}");
-
-                        teamDictionary[game.HomeTeam] = newWinnerDominance;
-                        teamDictionary[game.AwayTeam] = newLoserDominance;
-                    }
-                    else
-                    {
-                        winner = teamDictionary[game.AwayTeam];
-
-                        loser = teamDictionary[game.HomeTeam];
-
-                        var newWinnerDominance = CalculateDominance(winner, loser, game.AwayPoints.Value - game.HomePoints.Value);
-                        var newLoserDominance = CalculateDominance(loser, winner, game.HomePoints.Value - game.AwayPoints.Value);
-
-                        Console.WriteLine($"{winner.Team.School} beats {loser.Team.School} {game.AwayPoints}-{game.HomePoints} with dominance {newWinnerDominance.TotalDominance - winner.TotalDominance} | {newLoserDominance.TotalDominance - loser.TotalDominance}");
-
-                        teamDictionary[game.AwayTeam] = newWinnerDominance;
-                        teamDictionary[game.HomeTeam] = newLoserDominance;
-                    }
-                }
-            }
+            await RunSeason(games, teamDictionary, year);
+            await RunSeason(games, teamDictionary, year);
+            await RunSeason(games, teamDictionary, year);
 
             var rankedTeams = teamDictionary.Select(x => x.Value).Where(x => x.Team.IsFbs).OrderByDescending(x => x.DominancePerGame);
 
             return Format(rankedTeams);
+        }
+
+        private async Task RunSeason(IEnumerable<Game> games, Dictionary<string, TeamDominance> teamDictionary, int year)
+        {
+            var weeks = games.GroupBy(g => g.Week).OrderBy(g => g.Key);
+            foreach (var week in weeks)
+            {
+                await RunWeek(week, teamDictionary, year);
+            }
+        }
+
+        private async Task RunWeek(IEnumerable<Game> weeklyGames, Dictionary<string, TeamDominance> teamDictionary, int year)
+        {
+            RunGames(teamDictionary, weeklyGames);
+        }
+
+        private void RunGames(Dictionary<string, TeamDominance> teamDictionary, IEnumerable<Game> games)
+        {
+
+            foreach (var game in games)
+            {
+                if (!game.HomePoints.HasValue || !game.AwayPoints.HasValue)
+                {
+                    //Console.WriteLine($"What happened with {game.HomeTeam} and {game.AwayTeam}");
+                    continue;
+                }
+
+                if (game.HomePoints.Value == 0 && game.AwayPoints == 0)
+                {
+                    continue;
+                }
+
+                TeamDominance winner, loser;
+                TeamDominance newWinnerDominance, newLoserDominance;
+
+                if (game.HomePoints > game.AwayPoints)
+                {
+                    winner = teamDictionary[game.HomeTeam];
+                    loser = teamDictionary[game.AwayTeam];
+
+                    newWinnerDominance = CalculateDominance(winner, loser, game.HomePoints.Value - game.AwayPoints.Value);
+                    newLoserDominance = CalculateDominance(loser, winner, game.AwayPoints.Value - game.HomePoints.Value);
+
+                    teamDictionary[game.HomeTeam] = newWinnerDominance;
+                    teamDictionary[game.AwayTeam] = newLoserDominance;
+                }
+                else
+                {
+                    winner = teamDictionary[game.AwayTeam];
+                    loser = teamDictionary[game.HomeTeam];
+
+                    newWinnerDominance = CalculateDominance(winner, loser, game.AwayPoints.Value - game.HomePoints.Value);
+                    newLoserDominance = CalculateDominance(loser, winner, game.HomePoints.Value - game.AwayPoints.Value);
+
+                    teamDictionary[game.AwayTeam] = newWinnerDominance;
+                    teamDictionary[game.HomeTeam] = newLoserDominance;
+                }
+
+                Console.WriteLine($"{game.Week}: {((winner.Team.Abbreviation ?? winner.Team.School) + $" ({winner.DominancePerGame:F4})").PadLeft(14)} beats {((loser.Team.Abbreviation ?? loser.Team.School) .ToString().PadRight(5) + $" ({loser.DominancePerGame:F4})")} {Math.Max(game.HomePoints.Value, game.AwayPoints.Value).ToString("D2")}-{Math.Min(game.HomePoints.Value, game.AwayPoints.Value).ToString("D2")} with dominance {(newWinnerDominance.TotalDominance - winner.TotalDominance):F4} | {(newLoserDominance.TotalDominance - loser.TotalDominance):F4}");
+            }
         }
 
         private string Format(IOrderedEnumerable<TeamDominance> rankedTeams)
@@ -103,7 +119,7 @@ namespace BadgerRank.Heart
 
             for (int i = 0; i < rankList.Count; i++)
             {
-                builder.AppendLine($"{i+1, 2}. {rankList[i].Team.School.PadRight(longestTeamName + 1, ' ')} {rankList[i].DominancePerGame.ToString("F6")}");
+                builder.AppendLine($"{i+1, 3}. {rankList[i].Team.School.PadRight(longestTeamName + 1, ' ')} {rankList[i].DominancePerGame:F4}");
             }
 
             return builder.ToString();
@@ -111,12 +127,12 @@ namespace BadgerRank.Heart
 
         private TeamDominance CalculateDominance(TeamDominance teamDominance, TeamDominance opponent, int marginOfVictory)
         {
-            var max = marginOfVictory > 0 ? 1.0m : 0.5m;
-            var min = marginOfVictory > 0 ? 0.5m : 0.0m;
+            var max = marginOfVictory > 0 ? 1.0m : 0.6m;
+            var min = marginOfVictory > 0 ? 0.4m : 0.0m;
 
             var dc = marginOfVictory > 0 ? CalculateWinnerDominanceConstant(teamDominance.Team, opponent.Team, marginOfVictory) : CalculateLoserDominanceConstant(opponent.Team, teamDominance.Team, -1 * marginOfVictory);
             var dominanceConstant = dc;
-            var gameDominance = Math.Min(max, Math.Max(min ,(.35m * opponent.DominancePerGame) + dominanceConstant));
+            var gameDominance = Math.Min(max, Math.Max(min ,(.3m * opponent.DominancePerGame) + dominanceConstant));
 
             return new TeamDominance()
             {
@@ -190,7 +206,7 @@ namespace BadgerRank.Heart
             }
             else if (winner.IsFbs)
             {
-                marginBonus *= .75m;
+                marginBonus *= .8m;
             }
             else
             {
@@ -280,11 +296,11 @@ namespace BadgerRank.Heart
             }
             else if (team.IsFbs)
             {
-                return .4m;
+                return .5m;
             }
             else
             {
-                return .2m;
+                return .25m;
             }
         }
     }

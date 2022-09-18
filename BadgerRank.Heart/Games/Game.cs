@@ -34,7 +34,7 @@ namespace BadgerRank.Heart.Games
         public long? Attendance { get; set; }
 
         [JsonProperty("venue_id")]
-        public long VenueId { get; set; }
+        public long? VenueId { get; set; }
 
         [JsonProperty("venue")]
         public string Venue { get; set; }

@@ -20,7 +20,7 @@ namespace BadgerRank
             container.Register<IGameResolver, GameResolver>();
             container.Register<ITeamResolver, TeamResolver>();
             container.Register<IDriveResolver, DriveResolver>();
-            container.Register<ICfbApiClientFactory, CfbApiClientFactory>();
+            container.Register<ICfbApiClientFactory, CfbApiClientFactory>(Lifestyle.Singleton);
             container.Register<IAbstraction, Implementation>();
 
             container.RegisterInstance<Func<IAbstraction>>(() => container.GetInstance<IAbstraction>());
