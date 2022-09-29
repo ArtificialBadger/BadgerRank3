@@ -26,7 +26,7 @@ namespace BadgerRank.Heart
         {
             var teamDictionary = new Dictionary<string, TeamDominance>();
             
-            var year = 2022;
+            var year = 1997;
 
             var resultBuilder = new StringBuilder();
 
@@ -42,10 +42,12 @@ namespace BadgerRank.Heart
             await RunSeason(games, teamDictionary, year);
             await RunSeason(games, teamDictionary, year);
             await RunSeason(games, teamDictionary, year);
+            await RunSeason(games, teamDictionary, year);
+            await RunSeason(games, teamDictionary, year);
 
             var rankedTeams = teamDictionary.Select(x => x.Value).Where(x => x.Team.IsFbs).OrderByDescending(x => x.DominancePerGame);
 
-            return Format(rankedTeams);
+            return Format(rankedTeams, year);
         }
 
         private async Task RunSeason(IEnumerable<Game> games, Dictionary<string, TeamDominance> teamDictionary, int year)
@@ -108,12 +110,12 @@ namespace BadgerRank.Heart
             }
         }
 
-        private string Format(IOrderedEnumerable<TeamDominance> rankedTeams)
+        private string Format(IOrderedEnumerable<TeamDominance> rankedTeams, int year)
         {
             var rankList = rankedTeams.ToList();
 
             var builder = new StringBuilder();
-            builder.AppendLine("Top Ranked Teams");
+            builder.AppendLine($"Top Ranked Teams ({year} season)");
 
             var longestTeamName = rankList.Max(x => x.Team.School.Length);
 

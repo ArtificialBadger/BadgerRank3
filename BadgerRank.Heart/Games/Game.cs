@@ -28,7 +28,7 @@ namespace BadgerRank.Heart.Games
         public bool NeutralSite { get; set; }
 
         [JsonProperty("conference_game")]
-        public bool ConferenceGame { get; set; }
+        public bool? ConferenceGame { get; set; }
 
         [JsonProperty("attendance")]
         public long? Attendance { get; set; }
