@@ -127,8 +127,8 @@ namespace BadgerRank.Heart
 
         private TeamDominance CalculateDominance(TeamDominance teamDominance, TeamDominance opponent, int marginOfVictory)
         {
-            var max = marginOfVictory > 0 ? 1.0m : 0.6m;
-            var min = marginOfVictory > 0 ? 0.4m : 0.0m;
+            var max = marginOfVictory > 0 ? 1.0m : 0.5m;
+            var min = marginOfVictory > 0 ? 0.5m : 0.0m;
 
             var dc = marginOfVictory > 0 ? CalculateWinnerDominanceConstant(teamDominance.Team, opponent.Team, marginOfVictory) : CalculateLoserDominanceConstant(opponent.Team, teamDominance.Team, -1 * marginOfVictory);
             var dominanceConstant = dc;
