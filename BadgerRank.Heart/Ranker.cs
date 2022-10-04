@@ -26,7 +26,7 @@ namespace BadgerRank.Heart
         {
             var teamDictionary = new Dictionary<string, TeamDominance>();
             
-            var year = 1997;
+            var year = 2022;
 
             var resultBuilder = new StringBuilder();
 
@@ -39,8 +39,6 @@ namespace BadgerRank.Heart
 
             var games = await this.gameResolver.GetGamesForYear(year);
 
-            await RunSeason(games, teamDictionary, year);
-            await RunSeason(games, teamDictionary, year);
             await RunSeason(games, teamDictionary, year);
             await RunSeason(games, teamDictionary, year);
             await RunSeason(games, teamDictionary, year);
